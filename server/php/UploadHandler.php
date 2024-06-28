@@ -558,7 +558,7 @@ class UploadHandler
         // Remove path information and dots around the filename, to prevent uploading
         // into different directories or replacing hidden system files.
         // Also remove control characters and spaces (\x00..\x20) around the filename:
-        $name = trim($this->basename(stripslashes($name)), ".\x00..\x20");
+        $name = trim($this->basename(stripslashes($name  ?? '')), ".\x00..\x20");
         // Replace dots in filenames to avoid security issues with servers
         // that interpret multiple file extensions, e.g. "example.php.png":
         $replacement = $this->options['replace_dots_in_filenames'];
@@ -1239,7 +1239,7 @@ class UploadHandler
     }
 
     protected function get_version_param() {
-        return $this->basename(stripslashes($this->get_query_param('version')));
+        return $this->basename(stripslashes($this->get_query_param('version') ?? ''));
     }
 
     protected function get_singular_param_name() {
@@ -1248,7 +1248,7 @@ class UploadHandler
 
     protected function get_file_name_param() {
         $name = $this->get_singular_param_name();
-        return $this->basename(stripslashes($this->get_query_param($name)));
+        return $this->basename(stripslashes($this->get_query_param($name) ?? ''));
     }
 
     protected function get_file_names_params() {
@@ -1257,7 +1257,7 @@ class UploadHandler
             return null;
         }
         foreach ($params as $key => $value) {
-            $params[$key] = $this->basename(stripslashes($value));
+            $params[$key] = $this->basename(stripslashes($value ?? ''));
         }
         return $params;
     }
@@ -1341,7 +1341,7 @@ class UploadHandler
         $this->response = $content;
         if ($print_response) {
             $json = json_encode($content);
-            $redirect = stripslashes($this->get_post_param('redirect'));
+            $redirect = stripslashes($this->get_post_param('redirect') ?? '');
             if ($redirect && preg_match($this->options['redirect_allow_target'], $redirect)) {
                 return $this->header('Location: '.sprintf($redirect, rawurlencode($json)));
             }
